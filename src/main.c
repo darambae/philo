@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:21 by dabae             #+#    #+#             */
-/*   Updated: 2024/04/29 13:07:29 by dabae            ###   ########.fr       */
+/*   Updated: 2024/04/30 09:24:23 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,9 +74,14 @@ int	main(int ac, char **av)
 	{
 		init_data(data, av + 1);
 		init_philo(data);
-		life_cycle(data);
-		check_to_stop(data);
-		join_threads(data);
+		if (data->num_philo == 1)
+			check_death(&data->philo[0]);
+		else
+		{
+			life_cycle(data);
+			check_to_stop(data);
+			join_threads(data);
+		}
 		ft_exit(data, 0, NULL);
 	}
 	else
