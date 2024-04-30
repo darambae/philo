@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:16 by dabae             #+#    #+#             */
-/*   Updated: 2024/04/30 09:44:45 by dabae            ###   ########.fr       */
+/*   Updated: 2024/04/30 10:58:45 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,10 @@ typedef struct s_philo
 	int				id;
 	int				num_eat;
 	uint64_t		last_meal;
-	int				state;
+	bool			is_eating;
 	pthread_mutex_t	num_eat_lock;
 	pthread_mutex_t	last_meal_lock;
-	pthread_mutex_t	state_lock;
+	pthread_mutex_t	eating_lock;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
 	pthread_t		thread;
@@ -84,7 +84,7 @@ void		init_data(t_data *data, char **args);
 void		set_num_eat(t_philo *philo);
 void		set_stop(t_data *data);
 //void		set_start_time(t_philo *philo, uint64_t time);
-void		change_state(t_philo *philo, int state);
+void		set_eating(t_philo *philo, bool setting);
 void		set_last_meal(t_philo *philo);
 void		print(t_philo *philo, char *str);
 void		check_death(t_philo *philo);

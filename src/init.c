@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:25 by dabae             #+#    #+#             */
-/*   Updated: 2024/04/29 13:38:33 by dabae            ###   ########.fr       */
+/*   Updated: 2024/04/30 10:55:13 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static int	allocate_data(t_data *data)
 	while (++i < data->num_philo)
 	{
 		mutex_handler(data, &data->philo[i].num_eat_lock, INIT);
-		mutex_handler(data, &data->philo[i].state_lock, INIT);
+		mutex_handler(data, &data->philo[i].eating_lock, INIT);
 		mutex_handler(data, &data->philo[i].last_meal_lock, INIT);
 		mutex_handler(data, &data->forks[i], INIT);
 	}
@@ -76,7 +76,7 @@ int	init_philo(t_data *data)
 		data->philo[i].id = i + 1;
 		data->philo[i].data = data;
 		data->philo[i].num_eat = 0;
-		data->philo[i].state = -1;
+		data->philo[i].is_eating = 0;
 		data->philo[i].last_meal = 0;
 		data->philo[i].left_fork = &data->forks[i];
 		if (data->num_philo == 1)

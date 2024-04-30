@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:23 by dabae             #+#    #+#             */
-/*   Updated: 2024/04/30 09:21:52 by dabae            ###   ########.fr       */
+/*   Updated: 2024/04/30 14:03:19 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,13 @@ int	time_to_stop(t_philo *philo)
 		return (1);
 	}
 	mutex_handler(philo->data, &philo->data->stop_lock, UNLOCK);
+	mutex_handler(philo->data, &philo->num_eat_lock, LOCK);
+	if (philo->num_eat == philo->data->num_must_eat)
+	{
+		mutex_handler(philo->data, &philo->num_eat_lock, UNLOCK);
+		return (1);
+	}
+	mutex_handler(philo->data, &philo->num_eat_lock, UNLOCK);
 	return (0);
 }
 

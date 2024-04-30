@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 13:41:16 by dabae             #+#    #+#             */
-/*   Updated: 2024/04/26 13:55:19 by dabae            ###   ########.fr       */
+/*   Updated: 2024/04/30 10:36:32 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,6 @@ void	mutex_handler(t_data *data, pthread_mutex_t *mutex, int type)
 void	print(t_philo *philo, char *str)
 {
 	mutex_handler(philo->data, &philo->data->print_lock, LOCK);
-	printf("At %lu, Philosopher no.%d %s.\n", get_time(), philo->id, str);
+	printf("%lu %d %s\n", get_time(), philo->id, str);
 	mutex_handler(philo->data, &philo->data->print_lock, UNLOCK);
 }
