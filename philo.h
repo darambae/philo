@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:16 by dabae             #+#    #+#             */
-/*   Updated: 2024/04/30 10:58:45 by dabae            ###   ########.fr       */
+/*   Updated: 2024/04/30 15:09:49 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,9 @@ typedef struct s_data
 	uint64_t		time_to_sleep;
 	uint64_t		start_time;
 	int				num_must_eat;
-
+	
+	int				num_full;
+	pthread_mutex_t	full_lock;
 	bool			stop;
 	pthread_mutex_t	stop_lock;
 
@@ -63,6 +65,8 @@ typedef struct s_philo
 	int				num_eat;
 	uint64_t		last_meal;
 	bool			is_eating;
+	bool			is_full;
+	
 	pthread_mutex_t	num_eat_lock;
 	pthread_mutex_t	last_meal_lock;
 	pthread_mutex_t	eating_lock;
@@ -88,7 +92,7 @@ void		set_eating(t_philo *philo, bool setting);
 void		set_last_meal(t_philo *philo);
 void		print(t_philo *philo, char *str);
 void		check_death(t_philo *philo);
-int			check_full(t_philo *philo);
+void		check_full(t_philo *philo);
 void		check_to_stop(t_data *data);
 int			time_to_stop(t_philo *philo);
 void		join_threads(t_data *data);

@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:25 by dabae             #+#    #+#             */
-/*   Updated: 2024/04/30 10:55:13 by dabae            ###   ########.fr       */
+/*   Updated: 2024/04/30 15:10:27 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,10 @@ void	init_data(t_data *data, char **args)
 	{
 		mutex_handler(data, &data->print_lock, INIT);
 		mutex_handler(data, &data->stop_lock, INIT);
+		mutex_handler(data, &data->full_lock, INIT);
 		data->stop = 0;
 		data->start_time = 0;
+		data->num_full = 0;
 		data->num_philo = (int) ft_atoi(args[0]);
 		data->time_to_die = (uint64_t) ft_atoi(args[1]);
 		data->time_to_eat = (uint64_t) ft_atoi(args[2]);
@@ -76,6 +78,7 @@ int	init_philo(t_data *data)
 		data->philo[i].id = i + 1;
 		data->philo[i].data = data;
 		data->philo[i].num_eat = 0;
+		data->philo[i].is_full = false;
 		data->philo[i].is_eating = 0;
 		data->philo[i].last_meal = 0;
 		data->philo[i].left_fork = &data->forks[i];

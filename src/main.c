@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:21 by dabae             #+#    #+#             */
-/*   Updated: 2024/04/30 11:06:43 by dabae            ###   ########.fr       */
+/*   Updated: 2024/04/30 15:10:59 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ void	ft_exit(t_data *data, int err, char *msg)
 	}
 	mutex_handler(data, &data->print_lock, DESTROY);
 	mutex_handler(data, &data->stop_lock, DESTROY);
+	mutex_handler(data, &data->full_lock, DESTROY);
 	cleanup(data);
 	if (err)
 	{
