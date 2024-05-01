@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:25 by dabae             #+#    #+#             */
-/*   Updated: 2024/04/30 15:10:27 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/01 11:26:39 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ void	init_data(t_data *data, char **args)
 		mutex_handler(data, &data->print_lock, INIT);
 		mutex_handler(data, &data->stop_lock, INIT);
 		mutex_handler(data, &data->full_lock, INIT);
+		mutex_handler(data, &data->monitor_lock, INIT);
 		data->stop = 0;
 		data->start_time = 0;
 		data->num_full = 0;

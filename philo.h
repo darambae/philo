@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:16 by dabae             #+#    #+#             */
-/*   Updated: 2024/04/30 15:09:49 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/01 12:21:05 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ typedef struct s_data
 	bool			stop;
 	pthread_mutex_t	stop_lock;
 
+	pthread_mutex_t monitor_lock;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print_lock;
 	pthread_t		*tids;
@@ -66,7 +67,7 @@ typedef struct s_philo
 	uint64_t		last_meal;
 	bool			is_eating;
 	bool			is_full;
-	
+
 	pthread_mutex_t	num_eat_lock;
 	pthread_mutex_t	last_meal_lock;
 	pthread_mutex_t	eating_lock;
