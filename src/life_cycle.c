@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:23 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/01 12:14:52 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/01 15:58:39 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,16 +21,16 @@ int	time_to_stop(t_philo *philo)
 		return (1);
 	}
 	mutex_handler(philo->data, &philo->data->stop_lock, UNLOCK);
-	//mutex_handler(philo->data, &philo->num_eat_lock, LOCK);
+	//mutex_handler(philo->data, &philo->data->full_lock, LOCK);
 	mutex_handler(philo->data, &philo->data->monitor_lock, LOCK);
 	if (philo->data->num_full == philo->data->num_philo)
 	{
-		//mutex_handler(philo->data, &philo->num_eat_lock, UNLOCK);
+		//mutex_handler(philo->data, &philo->data->full_lock, UNLOCK);
 		mutex_handler(philo->data, &philo->data->monitor_lock, UNLOCK);
 		return (1);
 	}
+	//mutex_handler(philo->data, &philo->data->full_lock, UNLOCK);
 	mutex_handler(philo->data, &philo->data->monitor_lock, UNLOCK);
-	//mutex_handler(philo->data, &philo->num_eat_lock, UNLOCK);
 	return (0);
 }
 
@@ -51,6 +51,8 @@ void	*routine(void *philo)
 			return (NULL);
 		}
 		eat(phi);
+		if (phi->data->num_must_eat != -1 && monitoring_num_eat(phi->data, phi->id - 1))
+			return (NULL);
 		if (time_to_stop(phi))
 			return (NULL);
 		sleep_phase(phi);
@@ -66,7 +68,6 @@ void	life_cycle(t_data *data)
 	int	i;
 
 	i = -1;
-	data->start_time = get_time();
 	while (++i < data->num_philo)
 		pthread_create(&data->tids[i], NULL, &routine, &data->philo[i]);
 }

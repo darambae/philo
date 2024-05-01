@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:27 by dabae             #+#    #+#             */
-/*   Updated: 2024/04/30 12:34:44 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/01 15:55:40 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	take_forks(t_philo *philo)
 {
 	if (philo->id % 2 == 0)
 	{
-		//ft_usleep(1000);
+		//ft_usleep(3000);
 		mutex_handler(philo->data, philo->right_fork, LOCK);
 	}
 	else
@@ -25,7 +25,7 @@ int	take_forks(t_philo *philo)
 		print(philo, "has taken a fork");
 	if (philo->id % 2 == 0)
 	{
-		//ft_usleep(1000);
+		//ft_usleep(3000);
 		mutex_handler(philo->data, philo->left_fork, LOCK);
 	}
 	else
@@ -39,7 +39,7 @@ int	take_forks(t_philo *philo)
 void	eat(t_philo *philo)
 {
 	print(philo, "is eating");
-	set_last_meal(philo);
+	set_start_time(philo, get_time());
 	ft_usleep(philo->data->time_to_eat);
 	set_num_eat(philo);
 	mutex_handler(philo->data, philo->left_fork, UNLOCK);

@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 12:57:56 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/01 11:57:14 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/01 15:08:49 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 void	set_num_eat(t_philo *philo)
 {
-	mutex_handler(philo->data, &philo->data->full_lock, LOCK);
+	mutex_handler(philo->data, &philo->num_eat_lock, LOCK);
 	philo->num_eat++;
-	mutex_handler(philo->data, &philo->data->full_lock, UNLOCK);
+	mutex_handler(philo->data, &philo->num_eat_lock, UNLOCK);
 }
 
 void	set_stop(t_data *data)
@@ -40,9 +40,9 @@ void	set_last_meal(t_philo *philo)
 	mutex_handler(philo->data, &philo->last_meal_lock, UNLOCK);
 }
 
-// void	set_start_time(t_philo *philo, uint64_t time)
-// {
-// 	mutex_handler(philo->data, &philo->start_time_lock, LOCK);
-// 	philo->start_time = time;
-// 	mutex_handler(philo->data, &philo->start_time_lock, UNLOCK);
-// }
+void	set_start_time(t_philo *philo, uint64_t time)
+{
+	mutex_handler(philo->data, &philo->start_time_lock, LOCK);
+	philo->start_time = time;
+	mutex_handler(philo->data, &philo->start_time_lock, UNLOCK);
+}
