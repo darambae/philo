@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:23 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/02 14:37:34 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/02 15:35:36 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,20 +15,46 @@
 int	time_to_stop(t_philo *philo)
 {
 	mutex_handler(philo->data, &philo->data->stop_lock, LOCK);
-	if (philo->data->stop == 1)
+	if (check_death(philo))
 	{
-		mutex_handler(philo->data, &philo->data->stop_lock, UNLOCK);
-		return (1);
+		if (philo->data->stop == 1)
+		{
+			mutex_handler(philo->data, &philo->data->stop_lock, UNLOCK);
+			return (1);
+		}
 	}
 	mutex_handler(philo->data, &philo->data->stop_lock, UNLOCK);
-	mutex_handler(philo->data, &philo->data->monitor_lock, LOCK);
-	if (philo->data->num_full == philo->data->num_philo)
+	if (philo->data->num_must_eat != -1)
 	{
+		check_full(philo);
+		//monitoring_num_eat(philo->data, philo->id - 1);
+		mutex_handler(philo->data, &philo->data->monitor_lock, LOCK);
+		mutex_handler(philo->data, &philo->data->full_lock, LOCK);
+		if (philo->data->num_full == philo->data->num_philo)
+		{
+			mutex_handler(philo->data, &philo->data->monitor_lock, UNLOCK);
+			mutex_handler(philo->data, &philo->data->full_lock, UNLOCK);
+			return (1);
+		}
 		mutex_handler(philo->data, &philo->data->monitor_lock, UNLOCK);
-		return (1);
+		mutex_handler(philo->data, &philo->data->full_lock, UNLOCK);
 	}
-	mutex_handler(philo->data, &philo->data->monitor_lock, UNLOCK);
 	return (0);
+	// mutex_handler(philo->data, &philo->data->stop_lock, LOCK);
+	// if (philo->data->stop == 1)
+	// {
+	// 	mutex_handler(philo->data, &philo->data->stop_lock, UNLOCK);
+	// 	return (1);
+	// }
+	// mutex_handler(philo->data, &philo->data->stop_lock, UNLOCK);
+	// mutex_handler(philo->data, &philo->data->monitor_lock, LOCK);
+	// if (philo->data->num_full == philo->data->num_philo)
+	// {
+	// 	mutex_handler(philo->data, &philo->data->monitor_lock, UNLOCK);
+	// 	return (1);
+	// }
+	// mutex_handler(philo->data, &philo->data->monitor_lock, UNLOCK);
+	// return (0);
 }
 
 void	*routine(void *philo)
@@ -38,7 +64,7 @@ void	*routine(void *philo)
 	phi = (t_philo *)philo;
 	while (!time_to_stop(phi))
 	{
-		check_death(phi);
+		//check_death(phi);
 		if (time_to_stop(phi))
 			return (NULL);
 		take_forks(phi);
@@ -55,45 +81,36 @@ void	*routine(void *philo)
 	return (NULL);
 }
 
-void	*min_eat_routine(void *philo)
-{
-	t_philo	*phi;
+// void	*min_eat_routine(void *philo)
+// {
+// 	t_philo	*phi;
 
-	phi = (t_philo *)philo;
-	while (!time_to_stop(phi))
-	{
-		if (time_to_stop(phi) || monitoring_num_eat(phi->data, phi->id - 1))
-			return (NULL);
-		take_forks(phi);
-		if (unlock_forks(phi))
-			return (NULL);
-		if (time_to_stop(phi) || monitoring_num_eat(phi->data, phi->id - 1))
-			return (NULL);
-		eat(phi);
-		if (time_to_stop(phi) || monitoring_num_eat(phi->data, phi->id - 1))
-			return (NULL);
-		sleep_phase(phi);
-		if (time_to_stop(phi) || monitoring_num_eat(phi->data, phi->id - 1))
-			return (NULL);
-		think(phi);
-	}
-	return (NULL);
-}
+// 	phi = (t_philo *)philo;
+// 	while (!time_to_stop(phi))
+// 	{
+// 		if (time_to_stop(phi) || monitoring_num_eat(phi->data, phi->id - 1))
+// 			return (NULL);
+// 		take_forks(phi);
+// 		if (unlock_forks(phi))
+// 			return (NULL);
+// 		if (time_to_stop(phi) || monitoring_num_eat(phi->data, phi->id - 1))
+// 			return (NULL);
+// 		eat(phi);
+// 		if (time_to_stop(phi) || monitoring_num_eat(phi->data, phi->id - 1))
+// 			return (NULL);
+// 		sleep_phase(phi);
+// 		if (time_to_stop(phi) || monitoring_num_eat(phi->data, phi->id - 1))
+// 			return (NULL);
+// 		think(phi);
+// 	}
+// 	return (NULL);
+// }
 
 void	life_cycle(t_data *data)
 {
 	int	i;
 
 	i = -1;
-	if (data->num_must_eat != -1)
-	{
-		while (++i < data->num_philo)
-			pthread_create(&data->tids[i], NULL, &min_eat_routine, \
-				&data->philo[i]);
-	}
-	else
-	{
-		while (++i < data->num_philo)
-			pthread_create(&data->tids[i], NULL, &routine, &data->philo[i]);
-	}
+	while (++i < data->num_philo)
+		pthread_create(&data->tids[i], NULL, &routine, &data->philo[i]);
 }

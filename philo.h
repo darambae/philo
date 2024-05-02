@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:16 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/02 09:45:13 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/02 15:07:37 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ void		set_start_time(t_philo *philo, uint64_t time);
 void		set_eating(t_philo *philo, bool setting);
 void		set_last_meal(t_philo *philo);
 void		print(t_philo *philo, char *str);
-void		check_death(t_philo *philo);
+int			check_death(t_philo *philo);
 int			check_full(t_philo *philo);
 int			monitoring_num_eat(t_data *data, int i);
 void		check_to_stop(t_data *data);
