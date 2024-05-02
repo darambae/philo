@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:18 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/02 10:02:49 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/02 12:01:24 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	check_full(t_philo *philo)
 		if (philo->data->num_full == philo->data->num_philo)
 		{
 			mutex_handler(philo->data, &philo->data->print_lock, LOCK);
-			printf("All philosophers have eaten as many times as %d.\n", \
+			printf("All philosophers have eaten at least %d times.\n", \
 				philo->data->num_must_eat);
 			mutex_handler(philo->data, &philo->data->print_lock, UNLOCK);
 			return (1);
