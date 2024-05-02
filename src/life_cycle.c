@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:23 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/02 12:01:48 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/02 14:37:34 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ void	*routine(void *philo)
 	phi = (t_philo *)philo;
 	while (!time_to_stop(phi))
 	{
+		check_death(phi);
 		if (time_to_stop(phi))
 			return (NULL);
 		take_forks(phi);
@@ -54,12 +55,12 @@ void	*routine(void *philo)
 	return (NULL);
 }
 
-void	*max_eat_routine(void *philo)
+void	*min_eat_routine(void *philo)
 {
 	t_philo	*phi;
 
 	phi = (t_philo *)philo;
-	while (!time_to_stop(phi) || monitoring_num_eat(phi->data, phi->id - 1))
+	while (!time_to_stop(phi))
 	{
 		if (time_to_stop(phi) || monitoring_num_eat(phi->data, phi->id - 1))
 			return (NULL);
@@ -87,7 +88,7 @@ void	life_cycle(t_data *data)
 	if (data->num_must_eat != -1)
 	{
 		while (++i < data->num_philo)
-			pthread_create(&data->tids[i], NULL, &max_eat_routine, \
+			pthread_create(&data->tids[i], NULL, &min_eat_routine, \
 				&data->philo[i]);
 	}
 	else

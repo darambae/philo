@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:18 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/02 12:01:24 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/02 14:45:08 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ void	check_to_stop(t_data *data)
 			if (data->num_must_eat < 0)
 			{
 				mutex_handler(data, &data->stop_lock, LOCK);
-				check_death(&data->philo[i]);
+				//check_death(&data->philo[i]);
 				if (data->stop)
 				{
 					mutex_handler(data, &data->stop_lock, UNLOCK);
@@ -94,8 +94,18 @@ void	check_to_stop(t_data *data)
 				}
 				mutex_handler(data, &data->stop_lock, UNLOCK);
 			}
-			else if (monitoring_num_eat(data, i))
-				return ;
+			else
+			{
+				mutex_handler(data, &data->monitor_lock, LOCK);
+				if (data->num_full == data->num_philo)
+				{
+					mutex_handler(data, &data->monitor_lock, UNLOCK);
+					return ;
+				}
+				mutex_handler(data, &data->monitor_lock, UNLOCK);	
+			}
+			// else if (monitoring_num_eat(data, i))
+			// 	return ;
 		}
 	}
 }
