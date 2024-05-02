@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:21 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/01 15:08:30 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/02 09:25:49 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,14 +67,11 @@ int	main(int ac, char **av)
 {
 	t_data	*data;
 
-	data = malloc(sizeof(t_data));
-	if (!data)
-	{
-		printf("Failed allocation of data\n");
-		return (1);
-	}
 	if (ac == 5 || ac == 6)
 	{
+		data = malloc(sizeof(t_data));
+		if (!data)
+			return (1);
 		init_data(data, av + 1);
 		init_philo(data);
 		if (data->num_philo == 1)
@@ -89,7 +86,6 @@ int	main(int ac, char **av)
 	}
 	else
 	{
-		free(data);
 		printf("Insufficient or too many arguments\n");
 		return (1);
 	}

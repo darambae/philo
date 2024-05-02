@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:23 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/02 07:05:16 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/02 10:54:40 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,12 @@ int	time_to_stop(t_philo *philo)
 		return (1);
 	}
 	mutex_handler(philo->data, &philo->data->stop_lock, UNLOCK);
-	//mutex_handler(philo->data, &philo->data->full_lock, LOCK);
 	mutex_handler(philo->data, &philo->data->monitor_lock, LOCK);
 	if (philo->data->num_full == philo->data->num_philo)
 	{
-		//mutex_handler(philo->data, &philo->data->full_lock, UNLOCK);
 		mutex_handler(philo->data, &philo->data->monitor_lock, UNLOCK);
 		return (1);
 	}
-	//mutex_handler(philo->data, &philo->data->full_lock, UNLOCK);
 	mutex_handler(philo->data, &philo->data->monitor_lock, UNLOCK);
 	return (0);
 }
@@ -44,15 +41,14 @@ void	*routine(void *philo)
 		if (time_to_stop(phi))
 			return (NULL);
 		take_forks(phi);
-		if (time_to_stop(phi))
-		{
-			mutex_handler(phi->data, phi->left_fork, UNLOCK);
-			mutex_handler(phi->data, phi->right_fork, UNLOCK);
+		if (unlock_forks(phi))
 			return (NULL);
-		}
 		eat(phi);
-		if (phi->data->num_must_eat != -1 && monitoring_num_eat(phi->data, phi->id - 1))
-			return (NULL);
+		if (phi->data->num_must_eat != -1)
+		{
+			if (time_to_stop(phi) || monitoring_num_eat(phi->data, phi->id - 1))
+				return (NULL);
+		}
 		if (time_to_stop(phi))
 			return (NULL);
 		sleep_phase(phi);
