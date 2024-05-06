@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:23 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/06 17:30:46 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/06 18:08:33 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@ int	time_to_stop(t_philo *philo)
 	if (philo->data->stop == 1)
 	{
 		mutex_handler(philo->data, &philo->data->exit_lock, UNLOCK);
-		mutex_handler(philo->data, &philo->data->stop_lock, UNLOCK);		
+		mutex_handler(philo->data, &philo->data->stop_lock, UNLOCK);
 		return (1);
 	}
 	mutex_handler(philo->data, &philo->data->exit_lock, UNLOCK);
-	mutex_handler(philo->data, &philo->data->stop_lock, UNLOCK);	
+	mutex_handler(philo->data, &philo->data->stop_lock, UNLOCK);
 	if (philo->data->num_must_eat != -1)
 	{
 		check_full(philo);

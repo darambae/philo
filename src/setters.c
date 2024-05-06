@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 12:57:56 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/06 16:16:26 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/06 18:14:55 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@ void	set_num_eat(t_philo *philo)
 
 void	set_stop(t_data *data)
 {
-	mutex_handler(data, &data->stop_lock, LOCK);
+	mutex_handler(data, &data->exit_lock, LOCK);
 	data->stop = true;
-	mutex_handler(data, &data->stop_lock, UNLOCK);
+	mutex_handler(data, &data->exit_lock, UNLOCK);
 }
 
 void	set_eating(t_philo *philo, bool setting)

@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:21 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/06 16:35:41 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/06 18:12:26 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ void	ft_exit(t_data *data, int err, char *msg)
 	{
 		mutex_handler(data, &data->philo[i].num_eat_lock, DESTROY);
 		mutex_handler(data, &data->philo[i].eating_lock, DESTROY);
-		//mutex_handler(data, &data->philo[i].last_meal_lock, DESTROY);
 		mutex_handler(data, &data->philo[i].start_time_lock, DESTROY);
 	}
 	mutex_handler(data, &data->print_lock, DESTROY);
@@ -69,25 +68,25 @@ int	main(int ac, char **av)
 
 	if (ac == 5 || ac == 6)
 	{
-		data = malloc(sizeof(t_data));
-		if (!data)
-			return (1);
-		init_data(data, av + 1);
-		init_philo(data);
-		if (data->num_philo == 1)
-			check_death(&data->philo[0]);
-		else
+		if (is_digit(av + 1) && is_positive(av + 1))
 		{
-			life_cycle(data);
-			check_to_stop(data);
-			join_threads(data);
+			data = malloc(sizeof(t_data));
+			if (!data)
+				return (1);
+			init_data(data, av + 1);
+			init_philo(data);
+			if (data->num_philo == 1)
+				check_death(&data->philo[0]);
+			else
+			{
+				life_cycle(data);
+				check_to_stop(data);
+				join_threads(data);
+			}
+			ft_exit(data, 0, NULL);
+			return (0);
 		}
-		ft_exit(data, 0, NULL);
 	}
-	else
-	{
-		printf("Insufficient or too many arguments\n");
-		return (1);
-	}
-	return (0);
+	printf("Invalid arguments");
+	return (1);
 }

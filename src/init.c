@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:25 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/06 16:15:49 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/06 18:02:09 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ static int	allocate_data(t_data *data)
 	{
 		mutex_handler(data, &data->philo[i].num_eat_lock, INIT);
 		mutex_handler(data, &data->philo[i].eating_lock, INIT);
-		//mutex_handler(data, &data->philo[i].last_meal_lock, INIT);
 		mutex_handler(data, &data->philo[i].start_time_lock, INIT);
 		mutex_handler(data, &data->forks[i], INIT);
 	}
@@ -41,33 +40,24 @@ static int	allocate_data(t_data *data)
 /*Initializing the dataeters*/
 void	init_data(t_data *data, char **args)
 {
-	if (is_digit(args) && is_positive(args))
-	{
-		mutex_handler(data, &data->print_lock, INIT);
-		mutex_handler(data, &data->stop_lock, INIT);
-		mutex_handler(data, &data->full_lock, INIT);
-		mutex_handler(data, &data->monitor_lock, INIT);
-		mutex_handler(data, &data->exit_lock, INIT);
-		data->stop = 0;
-		data->num_full = 0;
-		data->num_philo = (int) ft_atoi(args[0]);
-		data->simul_start = 0;
-		data->time_to_die = (uint64_t) ft_atoi(args[1]);
-		data->time_to_eat = (uint64_t) ft_atoi(args[2]);
-		data->time_to_sleep = (uint64_t) ft_atoi(args[3]);
-		if (args[4] && ft_atoi(args[4]) > 0)
-			data->num_must_eat = (int) ft_atoi(args[4]);
-		else
-			data->num_must_eat = -1;
-		if (allocate_data(data) == 1)
-			ft_exit(data, 1, "Failed allocation of dataeters");
-	}
+	mutex_handler(data, &data->print_lock, INIT);
+	mutex_handler(data, &data->stop_lock, INIT);
+	mutex_handler(data, &data->full_lock, INIT);
+	mutex_handler(data, &data->monitor_lock, INIT);
+	mutex_handler(data, &data->exit_lock, INIT);
+	data->stop = 0;
+	data->num_full = 0;
+	data->num_philo = (int) ft_atoi(args[0]);
+	data->simul_start = 0;
+	data->time_to_die = (uint64_t) ft_atoi(args[1]);
+	data->time_to_eat = (uint64_t) ft_atoi(args[2]);
+	data->time_to_sleep = (uint64_t) ft_atoi(args[3]);
+	if (args[4] && ft_atoi(args[4]) > 0)
+		data->num_must_eat = (int) ft_atoi(args[4]);
 	else
-	{
-		free(data);
-		printf("ERROR : Double check arguments\n");
-		exit(1);
-	}
+		data->num_must_eat = -1;
+	if (allocate_data(data) == 1)
+		ft_exit(data, 1, "Failed allocation of dataeters");
 }
 
 /*Initializing philosophers*/

@@ -6,23 +6,11 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:18 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/06 17:30:43 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/06 18:21:18 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../philo.h"
-
-int	monitoring_num_eat(t_philo *philo)
-{
-	mutex_handler(philo->data, &philo->data->monitor_lock, LOCK);
-	if (check_full(philo))
-	{
-		mutex_handler(philo->data, &philo->data->monitor_lock, UNLOCK);
-		return (1);
-	}
-	mutex_handler(philo->data, &philo->data->monitor_lock, UNLOCK);
-	return (0);
-}
 
 int	check_full(t_philo *philo)
 {
@@ -44,7 +32,7 @@ int	check_full(t_philo *philo)
 			printf("All philosophers have eaten at least %d times.\n", \
 				philo->data->num_must_eat);
 			mutex_handler(philo->data, &philo->data->print_lock, UNLOCK);
-			mutex_handler(philo->data, &philo->data->full_lock, UNLOCK);			
+			mutex_handler(philo->data, &philo->data->full_lock, UNLOCK);
 			return (1);
 		}
 		mutex_handler(philo->data, &philo->data->full_lock, UNLOCK);
@@ -57,9 +45,7 @@ int	check_death(t_philo *philo)
 	if (philo->data->num_philo == 1)
 	{
 		print(philo, "died");
-		mutex_handler(philo->data, &philo->data->exit_lock, LOCK);
-		philo->data->stop = true;
-		mutex_handler(philo->data, &philo->data->exit_lock, UNLOCK);
+		set_stop(philo->data);
 		return (1);
 	}
 	mutex_handler(philo->data, &philo->eating_lock, LOCK);
@@ -68,9 +54,7 @@ int	check_death(t_philo *philo)
 		philo->start_time + philo->data->time_to_die)
 	{
 		print(philo, "died");
-		mutex_handler(philo->data, &philo->data->exit_lock, LOCK);		
-		philo->data->stop = true;
-		mutex_handler(philo->data, &philo->data->exit_lock, UNLOCK);		
+		set_stop(philo->data);
 		mutex_handler(philo->data, &philo->eating_lock, UNLOCK);
 		mutex_handler(philo->data, &philo->start_time_lock, UNLOCK);
 		return (1);
@@ -83,6 +67,21 @@ int	check_death(t_philo *philo)
 	return (0);
 }
 
+static int	all_full(t_data *data)
+{
+	mutex_handler(data, &data->monitor_lock, LOCK);
+	mutex_handler(data, &data->full_lock, LOCK);
+	if (data->num_full == data->num_philo)
+	{
+		mutex_handler(data, &data->monitor_lock, UNLOCK);
+		mutex_handler(data, &data->full_lock, UNLOCK);
+		return (1);
+	}
+	mutex_handler(data, &data->monitor_lock, UNLOCK);
+	mutex_handler(data, &data->full_lock, UNLOCK);
+	return (0);
+}
+
 void	check_to_stop(t_data *data)
 {
 	int	i;
@@ -92,29 +91,18 @@ void	check_to_stop(t_data *data)
 		i = -1;
 		while (++i < data->num_philo)
 		{
-			//mutex_handler(data, &data->philo->eating_lock, LOCK);		
 			if (data->num_must_eat > 0)
 			{
-				//check_full(&data->philo[i]);
-				mutex_handler(data, &data->monitor_lock, LOCK);
-				mutex_handler(data, &data->full_lock, LOCK);
-				if (data->num_full == data->num_philo)
-				{
-					mutex_handler(data, &data->monitor_lock, UNLOCK);
-					mutex_handler(data, &data->full_lock, UNLOCK);
+				if (all_full(data))
 					return ;
-				}
-				mutex_handler(data, &data->monitor_lock, UNLOCK);	
-				mutex_handler(data, &data->full_lock, UNLOCK);
 			}
-			//mutex_handler(data, &data->philo->eating_lock, UNLOCK);		
 			check_death(&data->philo[i]);
 			mutex_handler(data, &data->exit_lock, LOCK);
-			mutex_handler(data, &data->stop_lock, LOCK);			
+			mutex_handler(data, &data->stop_lock, LOCK);
 			if (data->stop)
 			{
 				mutex_handler(data, &data->exit_lock, UNLOCK);
-				mutex_handler(data, &data->stop_lock, UNLOCK);				
+				mutex_handler(data, &data->stop_lock, UNLOCK);
 				return ;
 			}
 			mutex_handler(data, &data->exit_lock, UNLOCK);
