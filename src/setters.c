@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 12:57:56 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/01 15:08:49 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/06 16:16:26 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,6 @@ void	set_eating(t_philo *philo, bool setting)
 	mutex_handler(philo->data, &philo->eating_lock, LOCK);
 	philo->is_eating = setting;
 	mutex_handler(philo->data, &philo->eating_lock, UNLOCK);
-}
-
-void	set_last_meal(t_philo *philo)
-{
-	mutex_handler(philo->data, &philo->last_meal_lock, LOCK);
-	philo->last_meal = get_time();
-	mutex_handler(philo->data, &philo->last_meal_lock, UNLOCK);
 }
 
 void	set_start_time(t_philo *philo, uint64_t time)

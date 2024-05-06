@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:21 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/02 09:25:49 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/06 16:35:41 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	ft_exit(t_data *data, int err, char *msg)
 	{
 		mutex_handler(data, &data->philo[i].num_eat_lock, DESTROY);
 		mutex_handler(data, &data->philo[i].eating_lock, DESTROY);
-		mutex_handler(data, &data->philo[i].last_meal_lock, DESTROY);
+		//mutex_handler(data, &data->philo[i].last_meal_lock, DESTROY);
 		mutex_handler(data, &data->philo[i].start_time_lock, DESTROY);
 	}
 	mutex_handler(data, &data->print_lock, DESTROY);

@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:16 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/02 15:07:37 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/06 17:28:59 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ typedef struct s_data
 	uint64_t		time_to_eat;
 	uint64_t		time_to_sleep;
 	int				num_must_eat;
+	uint64_t		simul_start;
 
 	int				num_full;
 	pthread_mutex_t	full_lock;
@@ -53,6 +54,7 @@ typedef struct s_data
 	pthread_mutex_t	stop_lock;
 
 	pthread_mutex_t	monitor_lock;
+	pthread_mutex_t	exit_lock;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print_lock;
 	pthread_t		*tids;
@@ -63,13 +65,11 @@ typedef struct s_philo
 {
 	int				id;
 	int				num_eat;
-	uint64_t		last_meal;
 	bool			is_eating;
 	bool			is_full;
 	uint64_t		start_time;
 	pthread_mutex_t	start_time_lock;
 	pthread_mutex_t	num_eat_lock;
-	pthread_mutex_t	last_meal_lock;
 	pthread_mutex_t	eating_lock;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
@@ -90,11 +90,10 @@ void		set_num_eat(t_philo *philo);
 void		set_stop(t_data *data);
 void		set_start_time(t_philo *philo, uint64_t time);
 void		set_eating(t_philo *philo, bool setting);
-void		set_last_meal(t_philo *philo);
 void		print(t_philo *philo, char *str);
 int			check_death(t_philo *philo);
 int			check_full(t_philo *philo);
-int			monitoring_num_eat(t_data *data, int i);
+int			monitoring_num_eat(t_philo *philo);
 void		check_to_stop(t_data *data);
 int			time_to_stop(t_philo *philo);
 void		join_threads(t_data *data);

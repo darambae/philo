@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:27 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/02 13:50:03 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/06 16:50:42 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,23 +15,25 @@
 int	take_forks(t_philo *philo)
 {
 	if (philo->id % 2 == 0)
-		{
-			//ft_usleep(20);
-			mutex_handler(philo->data, philo->right_fork, LOCK);	
-		}
+	{
+		//ft_usleep(4000);
+		mutex_handler(philo->data, philo->right_fork, LOCK);
+	}	
 	else
 		mutex_handler(philo->data, philo->left_fork, LOCK);
+	// set_start_time(philo, get_time());
 	if (!time_to_stop(philo))
 		print(philo, "has taken a fork");
 	if (philo->id % 2 == 0)
-		{
-			//ft_usleep(20);
-			mutex_handler(philo->data, philo->left_fork, LOCK);
-		}
+	{
+		//ft_usleep(4000);
+		mutex_handler(philo->data, philo->left_fork, LOCK);
+	}
 	else
 		mutex_handler(philo->data, philo->right_fork, LOCK);
 	if (!time_to_stop(philo))
 		print(philo, "has taken a fork");
+	set_start_time(philo, get_time());
 	return (0);
 }
 
@@ -49,7 +51,7 @@ int	unlock_forks(t_philo *philo)
 void	eat(t_philo *philo)
 {
 	print(philo, "is eating");
-	set_start_time(philo, get_time());
+	//set_start_time(philo, get_time());
 	set_eating(philo, 1);
 	ft_usleep(philo->data->time_to_eat);
 	set_num_eat(philo);

@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:25 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/01 15:08:14 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/06 16:15:49 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static int	allocate_data(t_data *data)
 	{
 		mutex_handler(data, &data->philo[i].num_eat_lock, INIT);
 		mutex_handler(data, &data->philo[i].eating_lock, INIT);
-		mutex_handler(data, &data->philo[i].last_meal_lock, INIT);
+		//mutex_handler(data, &data->philo[i].last_meal_lock, INIT);
 		mutex_handler(data, &data->philo[i].start_time_lock, INIT);
 		mutex_handler(data, &data->forks[i], INIT);
 	}
@@ -47,9 +47,11 @@ void	init_data(t_data *data, char **args)
 		mutex_handler(data, &data->stop_lock, INIT);
 		mutex_handler(data, &data->full_lock, INIT);
 		mutex_handler(data, &data->monitor_lock, INIT);
+		mutex_handler(data, &data->exit_lock, INIT);
 		data->stop = 0;
 		data->num_full = 0;
 		data->num_philo = (int) ft_atoi(args[0]);
+		data->simul_start = 0;
 		data->time_to_die = (uint64_t) ft_atoi(args[1]);
 		data->time_to_eat = (uint64_t) ft_atoi(args[2]);
 		data->time_to_sleep = (uint64_t) ft_atoi(args[3]);
@@ -82,7 +84,6 @@ int	init_philo(t_data *data)
 		data->philo[i].is_full = false;
 		data->philo[i].is_eating = 0;
 		data->philo[i].start_time = 0;
-		data->philo[i].last_meal = 0;
 		data->philo[i].left_fork = &data->forks[i];
 		if (data->num_philo == 1)
 			data->philo[i].right_fork = NULL;
