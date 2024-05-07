@@ -6,7 +6,7 @@
 #    By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/25 12:26:12 by dabae             #+#    #+#              #
-#    Updated: 2024/05/06 17:44:17 by dabae            ###   ########.fr        #
+#    Updated: 2024/05/07 09:55:00 by dabae            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME= philo
 SRC= $(wildcard src/*.c)
 OBJ= $(SRC:.c=.o)
 CFLAGS= -Wall -Wextra -Werror
-CC= cc -g -pthread -fsanitize=thread
+CC= cc -g -pthread
 
 all: $(NAME)
 	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)

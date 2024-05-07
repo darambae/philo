@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:23 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/06 18:08:33 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/07 12:11:02 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,5 +71,9 @@ void	life_cycle(t_data *data)
 	i = -1;
 	data->simul_start = get_time();
 	while (++i < data->num_philo)
+	{
 		pthread_create(&data->tids[i], NULL, &routine, &data->philo[i]);
+		if (data->philo->id % 2 == 0)
+			ft_usleep(0);
+	}	
 }

@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:18 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/06 18:21:18 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/07 13:58:43 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,11 +75,18 @@ static int	all_full(t_data *data)
 	{
 		mutex_handler(data, &data->monitor_lock, UNLOCK);
 		mutex_handler(data, &data->full_lock, UNLOCK);
+		ft_usleep(0);
 		return (1);
 	}
 	mutex_handler(data, &data->monitor_lock, UNLOCK);
 	mutex_handler(data, &data->full_lock, UNLOCK);
 	return (0);
+}
+
+static void	unlock_stop(t_data *data)
+{
+	mutex_handler(data, &data->exit_lock, UNLOCK);
+	mutex_handler(data, &data->stop_lock, UNLOCK);
 }
 
 void	check_to_stop(t_data *data)
@@ -91,22 +98,20 @@ void	check_to_stop(t_data *data)
 		i = -1;
 		while (++i < data->num_philo)
 		{
-			if (data->num_must_eat > 0)
-			{
-				if (all_full(data))
-					return ;
-			}
 			check_death(&data->philo[i]);
 			mutex_handler(data, &data->exit_lock, LOCK);
 			mutex_handler(data, &data->stop_lock, LOCK);
 			if (data->stop)
 			{
-				mutex_handler(data, &data->exit_lock, UNLOCK);
-				mutex_handler(data, &data->stop_lock, UNLOCK);
+				unlock_stop(data);
 				return ;
 			}
-			mutex_handler(data, &data->exit_lock, UNLOCK);
-			mutex_handler(data, &data->stop_lock, UNLOCK);
+			unlock_stop(data);
+			if (data->num_must_eat > 0)
+			{
+				if (all_full(data))
+					return ;
+			}
 		}
 	}
 }

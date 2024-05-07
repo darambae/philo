@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:27 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/06 17:56:02 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/07 11:50:44 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ int	take_forks(t_philo *philo)
 		mutex_handler(philo->data, philo->right_fork, LOCK);
 	if (!time_to_stop(philo))
 		print(philo, "has taken a fork");
-	set_start_time(philo, get_time());
 	return (0);
 }
 
@@ -44,6 +43,7 @@ int	unlock_forks(t_philo *philo)
 void	eat(t_philo *philo)
 {
 	print(philo, "is eating");
+	set_start_time(philo, get_time());
 	set_eating(philo, 1);
 	ft_usleep(philo->data->time_to_eat);
 	set_num_eat(philo);
