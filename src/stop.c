@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:18 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/07 13:58:43 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/07 18:49:40 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ int	check_full(t_philo *philo)
 
 int	check_death(t_philo *philo)
 {
+	uint64_t	cur_time;
+
 	if (philo->data->num_philo == 1)
 	{
 		print(philo, "died");
@@ -50,20 +52,17 @@ int	check_death(t_philo *philo)
 	}
 	mutex_handler(philo->data, &philo->eating_lock, LOCK);
 	mutex_handler(philo->data, &philo->start_time_lock, LOCK);
-	if (philo->is_eating == 0 && philo->start_time && get_time() >= \
+	cur_time = get_time();
+	if (philo->is_eating == 0 && philo->start_time && cur_time > \
 		philo->start_time + philo->data->time_to_die)
 	{
 		print(philo, "died");
 		set_stop(philo->data);
-		mutex_handler(philo->data, &philo->eating_lock, UNLOCK);
-		mutex_handler(philo->data, &philo->start_time_lock, UNLOCK);
+		unlock_eat(philo);
 		return (1);
 	}
 	else
-	{
-		mutex_handler(philo->data, &philo->eating_lock, UNLOCK);
-		mutex_handler(philo->data, &philo->start_time_lock, UNLOCK);
-	}
+		unlock_eat(philo);
 	return (0);
 }
 
@@ -81,12 +80,6 @@ static int	all_full(t_data *data)
 	mutex_handler(data, &data->monitor_lock, UNLOCK);
 	mutex_handler(data, &data->full_lock, UNLOCK);
 	return (0);
-}
-
-static void	unlock_stop(t_data *data)
-{
-	mutex_handler(data, &data->exit_lock, UNLOCK);
-	mutex_handler(data, &data->stop_lock, UNLOCK);
 }
 
 void	check_to_stop(t_data *data)
@@ -109,6 +102,7 @@ void	check_to_stop(t_data *data)
 			unlock_stop(data);
 			if (data->num_must_eat > 0)
 			{
+				check_full(&data->philo[i]);
 				if (all_full(data))
 					return ;
 			}

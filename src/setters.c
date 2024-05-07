@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 12:57:56 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/06 18:14:55 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/07 19:08:51 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,12 @@ void	set_eating(t_philo *philo, bool setting)
 	mutex_handler(philo->data, &philo->eating_lock, UNLOCK);
 }
 
-void	set_start_time(t_philo *philo, uint64_t time)
+void	set_start_time(t_philo *philo)
 {
+	uint64_t	cur_time;
+	
+	cur_time = get_time();
 	mutex_handler(philo->data, &philo->start_time_lock, LOCK);
-	philo->start_time = time;
+	philo->start_time = cur_time;
 	mutex_handler(philo->data, &philo->start_time_lock, UNLOCK);
 }

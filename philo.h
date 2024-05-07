@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:16 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/06 17:57:02 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/07 16:40:15 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,6 @@
 # include <sys/time.h>
 # include <errno.h>
 # include <stdbool.h>
-
-enum e_state
-{
-	EATING,
-	THINKING,
-	SLEEPING,
-	FULL,
-	DEAD
-};
 
 enum e_mutex
 {
@@ -73,7 +64,6 @@ typedef struct s_philo
 	pthread_mutex_t	eating_lock;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
-	pthread_t		thread;
 	t_data			*data;
 }					t_philo;
 
@@ -88,7 +78,7 @@ int			init_philo(t_data *data);
 void		init_data(t_data *data, char **args);
 void		set_num_eat(t_philo *philo);
 void		set_stop(t_data *data);
-void		set_start_time(t_philo *philo, uint64_t time);
+void		set_start_time(t_philo *philo);
 void		set_eating(t_philo *philo, bool setting);
 void		print(t_philo *philo, char *str);
 int			check_death(t_philo *philo);
@@ -98,9 +88,9 @@ int			time_to_stop(t_philo *philo);
 void		join_threads(t_data *data);
 void		life_cycle(t_data *data);
 int			take_forks(t_philo *philo);
-int			unlock_forks(t_philo *philo);
+void		unlock_stop(t_data *data);
+void		unlock_eat(t_philo *philo);
 void		eat(t_philo *philo);
 void		sleep_phase(t_philo *philo);
-void		think(t_philo *philo);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:21 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/06 18:12:26 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/07 18:15:09 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,6 @@ int	main(int ac, char **av)
 				join_threads(data);
 			}
 			ft_exit(data, 0, NULL);
-			return (0);
 		}
 	}
 	printf("Invalid arguments");

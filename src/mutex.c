@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 13:41:16 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/06 17:50:28 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/07 17:38:03 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,4 +41,16 @@ void	print(t_philo *philo, char *str)
 	mutex_handler(philo->data, &philo->data->print_lock, LOCK);
 	printf("%lu %d %s\n", get_time() - philo->data->simul_start, philo->id, str);
 	mutex_handler(philo->data, &philo->data->print_lock, UNLOCK);
+}
+
+void	unlock_stop(t_data *data)
+{
+	mutex_handler(data, &data->exit_lock, UNLOCK);
+	mutex_handler(data, &data->stop_lock, UNLOCK);
+}
+
+void	unlock_eat(t_philo *philo)
+{
+	mutex_handler(philo->data, &philo->eating_lock, UNLOCK);
+	mutex_handler(philo->data, &philo->start_time_lock, UNLOCK);
 }

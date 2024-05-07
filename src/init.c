@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:26:25 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/06 18:02:09 by dabae            ###   ########.fr       */
+/*   Updated: 2024/05/07 16:20:57 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int	init_philo(t_data *data)
 		data->philo[i].data = data;
 		data->philo[i].num_eat = 0;
 		data->philo[i].is_full = false;
-		data->philo[i].is_eating = 0;
+		data->philo[i].is_eating = false;
 		data->philo[i].start_time = 0;
 		data->philo[i].left_fork = &data->forks[i];
 		if (data->num_philo == 1)
