@@ -3,8 +3,8 @@
 
 ### Language
 
- -[French](./readme_fr.md)
- -[Korean](./readme_kr.md)
+ - [French](./readme_fr.md)
+ - [Korean](./readme_kr.md)
 
 ## Table of Contents
 
