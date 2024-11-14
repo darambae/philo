@@ -5,42 +5,47 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/25 12:26:21 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/07 18:15:09 by dabae            ###   ########.fr       */
+/*   Created: 2024/04/08 10:42:53 by dabae             #+#    #+#             */
+/*   Updated: 2024/05/10 17:04:10 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../philo.h"
 
-void	cleanup(t_data *data)
+void	print(t_philo *philo, char *str)
 {
-	if (data->tids)
-		free(data->tids);
-	if (data->forks)
-		free(data->forks);
-	if (data->philo)
-		free(data->philo);
-	free(data);
+	pthread_mutex_lock(&philo->param->print);
+	printf("%lu %d %s\n", get_time() - philo->param->simul_start, \
+		philo->id, str);
+	pthread_mutex_unlock(&philo->param->print);
 }
 
-void	ft_exit(t_data *data, int err, char *msg)
+void	cleanup(t_param *param)
+{
+	if (param->tids)
+		free(param->tids);
+	if (param->forks)
+		free(param->forks);
+	if (param->philo)
+		free(param->philo);
+	free(param);
+}
+
+void	ft_exit(t_param *param, int err, char *msg)
 {
 	int	i;
 
 	i = -1;
-	if (!data)
+	if (!param)
 		return ;
-	while (++i < data->num_philo)
+	while (++i < param->num_philo)
 	{
-		mutex_handler(data, &data->philo[i].num_eat_lock, DESTROY);
-		mutex_handler(data, &data->philo[i].eating_lock, DESTROY);
-		mutex_handler(data, &data->philo[i].start_time_lock, DESTROY);
+		pthread_mutex_destroy(&param->forks[i]);
+		pthread_mutex_destroy(&param->philo[i].lock);
 	}
-	mutex_handler(data, &data->print_lock, DESTROY);
-	mutex_handler(data, &data->stop_lock, DESTROY);
-	mutex_handler(data, &data->full_lock, DESTROY);
-	mutex_handler(data, &data->monitor_lock, DESTROY);
-	cleanup(data);
+	pthread_mutex_destroy(&param->print);
+	pthread_mutex_destroy(&param->lock);
+	cleanup(param);
 	if (err)
 	{
 		printf("%s\n", msg);
@@ -50,42 +55,40 @@ void	ft_exit(t_data *data, int err, char *msg)
 		exit(0);
 }
 
-void	join_threads(t_data *data)
+static void	only_one_philo(t_param *param)
 {
-	int	i;
-
-	i = -1;
-	while (++i < data->num_philo)
-	{
-		if (pthread_join(data->tids[i], NULL) == -1)
-			ft_exit(data, 1, "Error: pthread_join failed");
-	}
+	param->simul_start = get_time();
+	pthread_create(&param->tids[0], NULL, &anyone_dead, &param->philo[0]);
+	pthread_join(param->tids[0], NULL);
+	while (param->stop == 0)
+		ft_usleep(0);
+	ft_exit(param, 0, NULL);
 }
 
 int	main(int ac, char **av)
 {
-	t_data	*data;
+	t_param	*param;
 
+	param = malloc(sizeof(t_param));
 	if (ac == 5 || ac == 6)
 	{
-		if (is_digit(av + 1) && is_positive(av + 1))
+		init_param(param, av + 1);
+		init_philo(param);
+		if (param->num_philo == 1)
+			only_one_philo(param);
+		else
 		{
-			data = malloc(sizeof(t_data));
-			if (!data)
-				return (1);
-			init_data(data, av + 1);
-			init_philo(data);
-			if (data->num_philo == 1)
-				check_death(&data->philo[0]);
-			else
-			{
-				life_cycle(data);
-				check_to_stop(data);
-				join_threads(data);
-			}
-			ft_exit(data, 0, NULL);
+			if (life_cycle(param) == 1)
+				ft_exit(param, 1, "Life cycle stopped");
+			if (param != NULL)
+				ft_exit(param, 0, NULL);
 		}
 	}
-	printf("Invalid arguments");
-	return (1);
+	else
+	{
+		free(param);
+		printf("Insufficient or too many arguments\n");
+		return (1);
+	}
+	return (0);
 }

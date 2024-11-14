@@ -5,8 +5,8 @@
 #                                                     +:+ +:+         +:+      #
 #    By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/04/25 12:26:12 by dabae             #+#    #+#              #
-#    Updated: 2024/05/07 18:50:44 by dabae            ###   ########.fr        #
+#    Created: 2024/05/10 17:04:53 by dabae             #+#    #+#              #
+#    Updated: 2024/05/13 09:46:39 by dabae            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,10 @@ NAME= philo
 SRC= $(wildcard src/*.c)
 OBJ= $(SRC:.c=.o)
 CFLAGS= -Wall -Wextra -Werror
-CC= cc -g -pthread -fsanitize=thread
+CC= cc -g -pthread
+
+#Checking data race
+#CC= cc -g -pthread -fsanitize=thread
 
 all: $(NAME)
 	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)

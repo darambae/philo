@@ -5,44 +5,75 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/25 12:26:27 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/07 18:15:59 by dabae            ###   ########.fr       */
+/*   Created: 2024/04/16 13:48:17 by dabae             #+#    #+#             */
+/*   Updated: 2024/05/13 09:21:40 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../philo.h"
 
-int	take_forks(t_philo *philo)
+void	change_state(t_philo *philo, int state)
 {
-	if (philo->id % 2 == 0)
-		mutex_handler(philo->data, philo->right_fork, LOCK);
-	else
-		mutex_handler(philo->data, philo->left_fork, LOCK);
-	if (!time_to_stop(philo))
-		print(philo, "has taken a fork");
-	if (philo->id % 2 == 0)
-		mutex_handler(philo->data, philo->left_fork, LOCK);
-	else
-		mutex_handler(philo->data, philo->right_fork, LOCK);
-	set_start_time(philo);
-	if (!time_to_stop(philo))
-		print(philo, "has taken a fork");
+	pthread_mutex_lock(&philo->lock);
+	if (state == DEAD)
+	{
+		pthread_mutex_lock(&philo->param->lock);
+		philo->param->stop = 1;
+		pthread_mutex_unlock(&philo->param->lock);
+	}
+	else if (state == EAT)
+		philo->time_limit_to_death = get_time() + philo->param->time_to_die;
+	philo->state = state;
+	pthread_mutex_unlock(&philo->lock);
+}
+
+int	check_stop(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->param->lock);
+	if (philo->param->stop)
+	{
+		pthread_mutex_unlock(&philo->param->lock);
+		return (1);
+	}
+	pthread_mutex_unlock(&philo->param->lock);
+	pthread_mutex_lock(&philo->lock);
+	if (philo->state == DEAD)
+	{
+		pthread_mutex_unlock(&philo->lock);
+		return (1);
+	}
+	pthread_mutex_unlock(&philo->lock);
+	pthread_mutex_lock(&philo->lock);
+	if (philo->state == FULL)
+	{
+		pthread_mutex_unlock(&philo->lock);
+		return (1);
+	}
+	pthread_mutex_unlock(&philo->lock);
 	return (0);
 }
 
-void	eat(t_philo *philo)
-{	
-	print(philo, "is eating");
-	set_eating(philo, 1);
-	ft_usleep(philo->data->time_to_eat);
-	set_num_eat(philo);
-	mutex_handler(philo->data, philo->left_fork, UNLOCK);
-	mutex_handler(philo->data, philo->right_fork, UNLOCK);
-	set_eating(philo, 0);
+/*By taking forks, start to eat*/
+void	take_forks(t_philo *philo)
+{
+	if (philo->id % 2 == 0)
+		pthread_mutex_lock(philo->right_fork);
+	else
+		pthread_mutex_lock(philo->left_fork);
+	if (philo->id % 2 == 0)
+		pthread_mutex_lock(philo->left_fork);
+	else
+		pthread_mutex_lock(philo->right_fork);
+	if (!check_stop(philo))
+		print(philo, "has taken a fork");
 }
 
-void	sleep_phase(t_philo *philo)
+/*by putting down forks, stop eating*/
+void	put_down_forks(t_philo *philo)
 {
-	print(philo, "is sleeping");
-	ft_usleep(philo->data->time_to_sleep);
+	pthread_mutex_lock(&philo->lock);
+	philo->num_eat++;
+	pthread_mutex_unlock(&philo->lock);
+	pthread_mutex_unlock(philo->right_fork);
+	pthread_mutex_unlock(philo->left_fork);
 }

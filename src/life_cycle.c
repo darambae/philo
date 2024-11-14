@@ -5,75 +5,99 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/25 12:26:23 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/07 18:44:56 by dabae            ###   ########.fr       */
+/*   Created: 2024/04/12 10:25:19 by dabae             #+#    #+#             */
+/*   Updated: 2024/05/13 09:49:52 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../philo.h"
 
-int	time_to_stop(t_philo *philo)
+static int	eat_phase(t_philo *philo)
 {
-	mutex_handler(philo->data, &philo->data->exit_lock, LOCK);
-	mutex_handler(philo->data, &philo->data->stop_lock, LOCK);
-	if (philo->data->stop == 1)
+	print(philo, "is eating");
+	change_state(philo, EAT);
+	ft_usleep(philo->param->time_to_eat);
+	put_down_forks(philo);
+	pthread_mutex_lock(&philo->lock);
+	if (philo->num_eat == philo->param->num_must_eat)
 	{
-		unlock_stop(philo->data);
-		return (1);
+		philo->state = FULL;
+		pthread_mutex_lock(&philo->param->lock);
+		philo->param->num_full++;
+		pthread_mutex_unlock(&philo->param->lock);
 	}
-	unlock_stop(philo->data);
-	if (philo->data->num_must_eat != -1)
+	pthread_mutex_unlock(&philo->lock);
+	return (0);
+}
+
+static void	sleep_phase(t_philo *philo)
+{
+	change_state(philo, SLEEP);
+	print(philo, "is sleeping");
+	ft_usleep(philo->param->time_to_sleep);
+}
+
+static int	unlock_forks(t_philo *philo)
+{
+	if (check_stop(philo))
 	{
-		mutex_handler(philo->data, &philo->data->monitor_lock, LOCK);
-		mutex_handler(philo->data, &philo->data->full_lock, LOCK);
-		if (philo->data->num_full == philo->data->num_philo)
-		{
-			mutex_handler(philo->data, &philo->data->monitor_lock, UNLOCK);
-			mutex_handler(philo->data, &philo->data->full_lock, UNLOCK);
-			return (1);
-		}
-		mutex_handler(philo->data, &philo->data->monitor_lock, UNLOCK);
-		mutex_handler(philo->data, &philo->data->full_lock, UNLOCK);
+		pthread_mutex_unlock(philo->right_fork);
+		pthread_mutex_unlock(philo->left_fork);
+		return (1);
 	}
 	return (0);
 }
 
-void	*routine(void *philo)
+void	*life_start(void *philo)
 {
 	t_philo	*phi;
 
 	phi = (t_philo *)philo;
-	while (!time_to_stop(phi))
+	if (pthread_create(&phi->thread, NULL, &anyone_dead, phi) != 0)
+		return ((void *)1);
+	while (check_stop(phi) == 0)
 	{
-		if (time_to_stop(phi))
-			return (NULL);
-		take_forks(phi);
-		if (time_to_stop(phi))
-		{
-			mutex_handler(phi->data, phi->left_fork, UNLOCK);
-			mutex_handler(phi->data, phi->right_fork, UNLOCK);
-			return (NULL);
-		}
-		eat(phi);
-		if (time_to_stop(phi))
-			return (NULL);
+		if (check_stop(phi))
+			break ;
+		take_forks(philo);
+		if (unlock_forks(phi))
+			break ;
+		eat_phase(phi);
+		if (check_stop(phi))
+			break ;
 		sleep_phase(phi);
-		if (time_to_stop(phi))
-			return (NULL);
+		if (check_stop(phi))
+			break ;
 		print(philo, "is thinking");
 	}
-	return (NULL);
+	if (pthread_join(phi->thread, NULL) != 0)
+		return ((void *)1);
+	return ((void *)0);
 }
 
-void	life_cycle(t_data *data)
+int	life_cycle(t_param *param)
 {
-	int	i;
+	pthread_t	thread;
+	int			i;
 
+	if (param->num_must_eat > 0)
+		pthread_create(&thread, NULL, &is_everyone_full, param);
 	i = -1;
-	data->simul_start = get_time();
-	while (++i < data->num_philo)
+	param->simul_start = get_time();
+	while (++i < param->num_philo)
 	{
-		pthread_create(&data->tids[i], NULL, &routine, &data->philo[i]);
-		ft_usleep(0);
-	}	
+		if (pthread_create(&param->tids[i], NULL, &life_start,
+				&param->philo[i]) != 0)
+			return (1);
+		ft_usleep(1);
+	}
+	i = -1;
+	while (++i < param->num_philo)
+	{
+		if (pthread_join(param->tids[i], NULL))
+			return (1);
+	}
+	if (param->num_must_eat > 0)
+		pthread_join(thread, NULL);
+	return (0);
 }

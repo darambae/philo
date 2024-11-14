@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/25 12:26:16 by dabae             #+#    #+#             */
-/*   Updated: 2024/05/07 16:40:15 by dabae            ###   ########.fr       */
+/*   Created: 2024/04/08 10:41:34 by dabae             #+#    #+#             */
+/*   Updated: 2024/05/10 16:56:02 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,77 +20,65 @@
 # include <unistd.h>
 # include <sys/time.h>
 # include <errno.h>
-# include <stdbool.h>
 
-enum e_mutex
-{
-	LOCK,
-	UNLOCK,
-	INIT,
-	DESTROY
-};
+# define EAT 0
+# define SLEEP 1
+# define THINK 2
+# define FULL 3
+# define DEAD 4
 
-typedef struct s_data
+struct	s_philo;
+
+typedef struct s_param
 {
 	int				num_philo;
+	int				num_must_eat;
+	int				stop;
+	int				num_full;
 	uint64_t		time_to_die;
 	uint64_t		time_to_eat;
 	uint64_t		time_to_sleep;
-	int				num_must_eat;
 	uint64_t		simul_start;
 
-	int				num_full;
-	pthread_mutex_t	full_lock;
-	bool			stop;
-	pthread_mutex_t	stop_lock;
-
-	pthread_mutex_t	monitor_lock;
-	pthread_mutex_t	exit_lock;
-	pthread_mutex_t	*forks;
-	pthread_mutex_t	print_lock;
-	pthread_t		*tids;
 	struct s_philo	*philo;
-}					t_data;
+	pthread_t		*tids;
+	pthread_mutex_t	print;
+	pthread_mutex_t	*forks;
+	pthread_mutex_t	lock;
+}				t_param;
 
 typedef struct s_philo
 {
 	int				id;
+	int				state;
 	int				num_eat;
-	bool			is_eating;
-	bool			is_full;
-	uint64_t		start_time;
-	pthread_mutex_t	start_time_lock;
-	pthread_mutex_t	num_eat_lock;
-	pthread_mutex_t	eating_lock;
+	uint64_t		time_limit_to_death;
+	pthread_t		thread;
+
+	pthread_mutex_t	lock;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
-	t_data			*data;
+	t_param			*param;
 }					t_philo;
 
 int			is_digit(char **args);
 int			is_positive(char **str);
 long		ft_atoi(char *str);
 void		ft_usleep(uint64_t elapsed);
-void		ft_exit(t_data *data, int err, char *msg);
+void		ft_exit(t_param *param, int err, char *msg);
+void		cleanup(t_param *param);
 uint64_t	get_time(void);
-void		mutex_handler(t_data *data, pthread_mutex_t *mutex, int type);
-int			init_philo(t_data *data);
-void		init_data(t_data *data, char **args);
-void		set_num_eat(t_philo *philo);
-void		set_stop(t_data *data);
-void		set_start_time(t_philo *philo);
-void		set_eating(t_philo *philo, bool setting);
+
+void		init_param(t_param *param, char **args);
+int			init_philo(t_param *param);
+int			life_cycle(t_param *param);
+void		*life_start(void *philo);
+void		take_forks(t_philo *philo);
+void		put_down_forks(t_philo *philo);
+void		*is_everyone_full(void *param);
+void		*anyone_dead(void *philo);
 void		print(t_philo *philo, char *str);
-int			check_death(t_philo *philo);
-int			check_full(t_philo *philo);
-void		check_to_stop(t_data *data);
-int			time_to_stop(t_philo *philo);
-void		join_threads(t_data *data);
-void		life_cycle(t_data *data);
-int			take_forks(t_philo *philo);
-void		unlock_stop(t_data *data);
-void		unlock_eat(t_philo *philo);
-void		eat(t_philo *philo);
-void		sleep_phase(t_philo *philo);
+void		change_state(t_philo *philo, int state);
+int			check_stop(t_philo *philo);
 
 #endif
